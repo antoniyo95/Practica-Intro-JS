@@ -1,368 +1,258 @@
-let playerOneTable = [
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
+// Tableros
+const tableroJugador1 = [];
+const tableroEnemigoJugador1 = [];
+const tableroJugador2 = [];
+const tableroEnemigoJugador2 = [];
+
+// Creación del tablero propio para jugador 1
+for (let i = 0; i < 10; i++) {
+  tableroJugador1[i] = [];
+  for (let j = 0; j < 10; j++) {
+    tableroJugador1[i][j] = "";
+  }
+}
+
+// Creación del tablero enemigo para jugador 1
+for (let i = 0; i < 10; i++) {
+  tableroEnemigoJugador1[i] = [];
+  for (let j = 0; j < 10; j++) {
+    tableroEnemigoJugador1[i][j] = "";
+  }
+}
+
+// Creación del tablero propio para jugador 2
+for (let i = 0; i < 10; i++) {
+  tableroJugador2[i] = [];
+  for (let j = 0; j < 10; j++) {
+    tableroJugador2[i][j] = "";
+  }
+}
+
+// Creación del tablero enemigo para jugador 2
+for (let i = 0; i < 10; i++) {
+  tableroEnemigoJugador2[i] = [];
+  for (let j = 0; j < 10; j++) {
+    tableroEnemigoJugador2[i][j] = "";
+  }
+}
+
+// Creación de los jugadores
+const jugador1 = {
+  nombre: "Jugador 1",
+  tableroJugador: tableroJugador1,
+  tableroEnemigo: tableroEnemigoJugador1,
+  disparosTotales: 100,
+};
+
+const jugador2 = {
+  nombre: "Jugador 2",
+  tableroJugador: tableroJugador2,
+  tableroEnemigo: tableroEnemigoJugador2,
+  disparosTotales: 100,
+};
+
+// Función para colocar barcos aleatoriamente en el tablero
+const colocarBarcos = (tablero, barcos) => {
+  for (const barco of barcos) {
+    let posicionValida = false;
+    while (!posicionValida) {
+      const fila = Math.floor(Math.random() * 10);
+      const columna = Math.floor(Math.random() * 10);
+      let direccion = Math.floor(Math.random() * 2);
+
+      // Comprueba si la dirección es posible
+      if (direccion === 0) {
+        if (columna + barco.longitud <= 10) {
+          posicionValida = true;
+          for (let i = 0; i < barco.longitud; i++) {
+            if (tablero[fila][columna + i] !== "") {
+              posicionValida = false;
+              break;
+            }
+          }
+          if (posicionValida) {
+            for (let i = 0; i < barco.longitud; i++) {
+              tablero[fila][columna + i] = barco.nombre;
+            }
+          }
+        }
+      } else {
+        if (fila + barco.longitud <= 10) {
+          posicionValida = true;
+          for (let i = 0; i < barco.longitud; i++) {
+            if (tablero[fila + i][columna] !== "") {
+              posicionValida = false;
+              break;
+            }
+          }
+          if (posicionValida) {
+            for (let i = 0; i < barco.longitud; i++) {
+              tablero[fila + i][columna] = barco.nombre;
+            }
+          }
+        }
+      }
+      if (!posicionValida) {
+        posicionValida = false;
+      }
+    }
+  }
+};
+
+// Función de disparo restando disparosTotales por cada disparo y recompensando al jugador que podrá volver a disparar si es "Tocado"
+const disparo = (jugadorAtacante, jugadorDefensor) => {
+  let disparoValido = false;
+  let fila, columna;
+
+  while (!disparoValido) {
+    fila = Math.floor(Math.random() * 10);
+    columna = Math.floor(Math.random() * 10);
+
+    // Comprueba si la posición ya ha sido disparada
+    if (
+      jugadorDefensor.tableroEnemigo[fila][columna] !== "💥" &&
+      jugadorDefensor.tableroEnemigo[fila][columna] !== "💧"
+    ) {
+      disparoValido = true;
+
+      // Comprueba si hay un barco en el lugar
+      if (jugadorDefensor.tableroJugador[fila][columna] !== "") {
+        jugadorDefensor.tableroJugador[fila][columna] = "💥";
+        jugadorDefensor.tableroEnemigo[fila][columna] = "💥";
+        jugadorAtacante.disparosTotales--;
+        console.log("#####################################################");
+        console.log(`Ronda ${round}: ${jugadorAtacante.nombre} disparó en la posición (${fila}, ${columna})`);
+        console.log(`Disparos restantes de ${jugadorAtacante.nombre}: ${jugadorAtacante.disparosTotales}`);
+        console.log("---------------------------------------------");
+        console.log(`Tablero del Jugador: ${jugadorAtacante.nombre}`);
+        console.table(jugadorAtacante.tableroJugador);
+        console.log(`Tablero del Enemigo: ${jugadorDefensor.nombre}`);
+        console.table(jugadorDefensor.tableroEnemigo);
+        console.log("---------------------------------------------");
+        console.log("El resultado es: ¡Tocado!");
+        console.log("---------------------------------------------");
+      } else {
+        jugadorDefensor.tableroEnemigo[fila][columna] = "💧";
+        jugadorAtacante.disparosTotales--;
+        console.log("#####################################################");
+        console.log(`Ronda ${round}: ${jugadorAtacante.nombre} disparó en la posición (${fila}, ${columna})`);
+        console.log(`Disparos restantes de ${jugadorAtacante.nombre}: ${jugadorAtacante.disparosTotales}`);
+        console.log("---------------------------------------------");
+        console.log(`Tablero del Jugador: ${jugadorAtacante.nombre}`);
+        console.table(jugadorAtacante.tableroJugador);
+        console.log(`Tablero del Enemigo: ${jugadorDefensor.nombre}`);
+        console.table(jugadorDefensor.tableroEnemigo);
+        console.log("---------------------------------------------");
+        console.log("El resultado es: ¡Agua!");
+        console.log("---------------------------------------------");
+      }
+    }
+  }
+};
+
+// Función para verificar si todos los barcos han sido hundidos
+const todosLosBarcosHundidos = (jugador) => {
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      if (jugador.tableroJugador[i][j] !== "" && jugador.tableroJugador[i][j] !== "💥") {
+        return false;
+      }
+    }
+  }
+  return true;
+};
+
+// Creación de los Barcos
+const barcos = [
+  { nombre: "🚢", longitud: 5, vida: 5 },
+  { nombre: "🚋", longitud: 4, vida: 4 },
+  { nombre: "🚃", longitud: 3, vida: 3 },
+  { nombre: "🚃", longitud: 3, vida: 3 },
+  { nombre: "⛵", longitud: 2, vida: 2 },
+  { nombre: "⛵", longitud: 2, vida: 2 },
+  { nombre: "⛵", longitud: 2, vida: 2 },
+  { nombre: "🚤", longitud: 1, vida: 1 },
+  { nombre: "🚤", longitud: 1, vida: 1 },
+  { nombre: "🚤", longitud: 1, vida: 1 },
 ];
-let playerOneEnemyTable = [
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-];
-let playerTwoTable = [
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-];
-let playerTwoEnemyTable = [
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-    ['', '','','','','','','','',''],
-];
-var statusShoot;
-class Player{
-    constructor(name,life,playerTable,maxShoot){
-        this.name=name;
-    this.life=life;
-    this.playerTable=playerTable;
-    }
 
+// Colocar barcos en los tableros de los jugadores
+colocarBarcos(jugador1.tableroJugador, barcos);
+colocarBarcos(jugador2.tableroJugador, barcos);
 
-}
-let player1 = new Player("Jugador 1",18,playerOneTable);
-let player2 = new Player("Jugador 2",18,playerTwoTable);
+// Se imprimen los tableros de ambos jugadores
+console.log("#####################################################");
+console.log("¡SE PRESENTAN LOS TABLEROS DE LOS JUGADORES!");
+console.log("#####################################################");
 
-//FUNCION VER SI ESTÁ LA POSICION ALEATORIA VACIA (SI ESTÁ VACIA HACER LA FUNCION DE METER BARQUITO)
-function isEmptyOneBox(a,b,table){
-    for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-           if(table[a][b]==''){
-            return true;
-           }else{
-            return false;
-           }
-        }
-    }
-}
-function isEmptyTwoBox(a,b,table){
-    for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-           if(table[a][b]=='' && table[a][b+1]==''){
-            return true;
-           }else{
-            return false;
-           }
-        }
-    }
-}
-function isEmptyThreeBox(a,b,table){
-    for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-           if(table[a][b]=='' && table[a][b+1]=='' && table[a][b+2]==''){
-            return true;
-           }else{
-            return false;
-           }
-        }
-    }
-}
-function isEmptyFourBox(a,b,table){
-    for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-           if(table[a][b]=='' && table[a][b+1]=='' && table[a][b+2]=='' && table[a][b+3]==''){
-            return true;
-           }else{
-            return false;
-           }
-        }
-    }
-}
-function isEmptyFiveBox(a,b,table){
-    for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-           if(table[a][b]=='' && table[a][b+1]=='' && table[a][b+2]=='' && table[a][b+3]=='' && table[a][b+4]==''){
-            return true;
-           }else{
-            return false;
-           }
-        }
-    }
+console.log("Tablero Jugador 1:");
+console.table(jugador1.tableroJugador);
+
+console.log("Tablero Jugador 2:");
+console.table(jugador2.tableroJugador);
+
+console.log("#####################################################");
+console.log("¡COMIENZA LA FASE DE DISPAROS!");
+console.log("#####################################################");
+
+// Fase de disparos de ambos jugadores
+let round = 1;
+let jugadorActual = jugador1;
+
+while (
+  jugador1.disparosTotales > 0 &&
+  jugador2.disparosTotales > 0 &&
+  jugadorActual.disparosTotales > 0
+) {
+  let oponente;
+  if (jugadorActual === jugador1) {
+    oponente = jugador2;
+  } else {
+    oponente = jugador1;
+  }
+
+  disparo(jugadorActual, oponente);
+
+  if (todosLosBarcosHundidos(oponente)) {
+    break;
+  }
+
+  round++;
+  if (jugadorActual === jugador1) {
+    jugadorActual = jugador2;
+  } else {
+    jugadorActual = jugador1;
+  }
 }
 
-
-//FUNCION METER BARQUITO DE UNO
-function insertShipOneBox(table){
-    var a;
-    var b;
-
-   do{
-    //COGER DOS NUMEROS ALEATORIOS QUE SERÁN LAS POSICIONES X e Y
-    a =Math.floor(Math.random()*10);
-    b=Math.floor(Math.random()*10);
-
-    }while(!isEmptyOneBox(a,b,table))    
-
-   for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-            
-                //INTRODUCIR BARQUITO 
-            table[a][b]="🚤";
-            
-        }
-    }
+if (todosLosBarcosHundidos(jugador1)) {
+  console.log("#####################################################");
+  console.log("¡El jugador 2 ha hundido todos los barcos y ha ganado!");
+  console.log("#####################################################");
+  console.log("ESTADO FINAL DE LOS TABLEROS DE LOS JUGADORES")
+  console.log("---------------------------------------------");
+  console.log("Tablero Jugador 1:");
+  console.table(jugador1.tableroJugador);
+  console.log("Tablero Jugador 2:");
+  console.table(jugador2.tableroJugador);
+} else if (todosLosBarcosHundidos(jugador2)) {
+  console.log("#####################################################");
+  console.log("¡El jugador 1 ha hundido todos los barcos y ha ganado!");
+  console.log("#####################################################");
+  console.log("ESTADO FINAL DE LOS TABLEROS DE LOS JUGADORES")
+  console.log("---------------------------------------------");
+  console.log("Tablero Jugador 1:");
+  console.table(jugador1.tableroJugador);
+  console.log("Tablero Jugador 2:");
+  console.table(jugador2.tableroJugador);
+} else {
+  console.log("#####################################################");
+  console.log("Ambos jugadores han agotado sus disparos. ¡Es un empate!");
+  console.log("#####################################################");
+  console.log("ESTADO FINAL DE LOS TABLEROS DE LOS JUGADORES")
+  console.log("---------------------------------------------");
+  console.log("Tablero Jugador 1:");
+  console.table(jugador1.tableroJugador);
+  console.log("Tablero Jugador 2:");
+  console.table(jugador2.tableroJugador);
 }
-//FIN FUNCION METER BARQUITO
-
-//FUNCION METER BARQUITO DE DOS
-function insertShipTwoBox(table){
-    var a;
-    var b;
-
-   do{
-    //COGER DOS NUMEROS ALEATORIOS QUE SERÁN LAS POSICIONES X e Y
-    a =Math.floor(Math.random()*10);
-    b=Math.floor(Math.random()*10);
-
-    }while(!isEmptyTwoBox(a,b,table))    
-
-   for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-                //INTRODUCIR BARQUITO 
-                table[a][b]="⛵";
-                table[a][b+1]="⛵";
-    }
-}
-}
-//FIN FUNCION METER BARQUITO
-
-//FUNCION METER BARQUITO DE TRES
-function insertShipThreeBox(table){
-    var a;
-    var b;
-
-   do{
-    //COGER DOS NUMEROS ALEATORIOS QUE SERÁN LAS POSICIONES X e Y
-    a =Math.floor(Math.random()*10);
-    b=Math.floor(Math.random()*10);
-
-    }while(!isEmptyThreeBox(a,b,table))    
-
-   for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-                //INTRODUCIR BARQUITO 
-                table[a][b]="🚃";
-                table[a][b+1]="🚃";  
-                table[a][b+2]="🚃";  
-    }
-}
-}
-//FIN FUNCION METER BARQUITO
-
-//FUNCION METER BARQUITO DE CUATRO
-function insertShipFourBox(table){
-    var a;
-    var b;
-
-   do{
-    //COGER DOS NUMEROS ALEATORIOS QUE SERÁN LAS POSICIONES X e Y
-    a =Math.floor(Math.random()*10);
-    b=Math.floor(Math.random()*10);
-
-    }while(!isEmptyFourBox(a,b,table))    
-
-   for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-                //INTRODUCIR BARQUITO 
-                table[a][b]="🚋";
-                table[a][b+1]="🚋";
-                table[a][b+2]="🚋";
-                table[a][b+3]="🚋";  
-    }
-}
-}
-//FIN FUNCION METER BARQUITO
-//FUNCION METER BARQUITO DE CINCO
-function insertShipFiveBox(table){
-    var a;
-    var b;
-
-   do{
-    //COGER DOS NUMEROS ALEATORIOS QUE SERÁN LAS POSICIONES X e Y
-    a =Math.floor(Math.random()*10);
-    b=Math.floor(Math.random()*10);
-
-    }while(!isEmptyFiveBox(a,b,table))    
-
-   for (let x = 0; x < table.length; x++) {
-        for(let y = 0; y < 9; y++){
-                //INTRODUCIR BARQUITO 
-                table[a][b]="🚢";
-                table[a][b+1]="🚢";
-                table[a][b+2]="🚢";
-                table[a][b+3]="🚢";  
-                table[a][b+4]="🚢";  
-    }
-}
-}
-//FIN FUNCION METER BARQUITO
-
-function isShooted(a,b,playerTable){
-    for (let x = 0; x < playerTable.length; x++) {
-        for(let y = 0; y < playerTable.length; y++){
-           if(playerTable[a][b]=='💥' || playerTable[a][b]=='💧'){
-            return true;
-           
-           }else{
-            return false;
-           }
-         
-        }
-    }
-}
-
-//Función Disparo
-function shoot(player,playerTable,playerTableEnemy){
-    var a;
-    var b;
-    do{
-        //COGER DOS NUMEROS ALEATORIOS QUE SERÁN LAS POSICIONES X e Y
-        a=Math.floor(Math.random()*10);
-        b=Math.floor(Math.random()*10);
-    }while(isShooted(a,b,playerTable));
-
-   for (let x = 0; x < playerTable.length; x++) {
-        for(let y = 0; y <playerTable.length; y++){
-                if(playerTable[a][b]==''){
-                    playerTable[a][b]='💧';
-                    playerTableEnemy[a][b]='💧';
-                    statusShoot='Agua';
-                    
-                }if(playerTable[a][b]!='' && playerTable[a][b]!='💧' ){
-
-                    playerTable[a][b]='💥';
-                    playerTableEnemy[a][b]='💥';
-                    statusShoot='Tocado';
-                }
-        }
-    }
-    console.log(player.name+" dispara en posicion: "+a+","+b)
-}
-
-//CREAR TABLEROS
-//Jugador 1
-for (let i=0;i<=2;i++){
-    insertShipOneBox(playerOneTable);  
-}
-for (let i=0;i<=2;i++){
-    insertShipTwoBox(playerOneTable);  
-}
-for (let i=0;i<=1;i++){
-    insertShipThreeBox(playerOneTable);  
-}
-insertShipFourBox(playerOneTable);  
-insertShipFiveBox(playerOneTable);
-
-//Jugador 2
-for (let i=0;i<=2;i++){
-    insertShipOneBox(playerTwoTable);  
-}
-for (let i=0;i<=2;i++){
-    insertShipTwoBox(playerTwoTable);  
-}
-for (let i=0;i<=1;i++){
-    insertShipThreeBox(playerTwoTable);  
-}
-insertShipFourBox(playerTwoTable);  
-insertShipFiveBox(playerTwoTable);
-
-console.log("¡COMIENZA EL JUEGO BATTLESHIP!")
-
-//Mostrar tableros de jugadores
-console.log("Tableros de jugadores:")
-console.log("Tablero Jugador1")
-console.table(playerOneTable);
-
-console.log("Tablero Jugador2")
-console.table(playerTwoTable);
-
-//Desarrollo del juego
-console.log("COMIENZAN LOS DISPAROS")
-
-do{
-    shoot(player1,playerTwoTable,playerOneEnemyTable)
-    while(statusShoot=='Tocado'){
-        player2.life--;
-        console.log("Ha disparado barco")
-        console.log("J1:"+player1.life+" | J2: "+player2.life)
-        console.table(playerOneEnemyTable)
-        if (player2.life==0){
-            console.log("El jugador 2 no tiene vidas, fin del juego")
-            console.log("Tablero final del jugador 1")
-            console.table(playerOneTable)
-            console.log("Tablero final del jugador 2")
-            console.table(playerTwoTable)
-        break;}
-        else{
-            shoot(player1,playerTwoTable,playerOneEnemyTable)
-        }
-        break;
-        }
-        if(statusShoot=='Agua'){
-            console.log("Ha disparado agua")
-            console.log("J1:"+player1.life+" | J2: "+player2.life)
-            console.table(playerOneEnemyTable)
-        }
-
-    shoot(player2,playerOneTable,playerTwoEnemyTable)
-    while(statusShoot=='Tocado'){
-        player1.life--;
-        console.log("Ha disparado barco")
-        console.log("J1:"+player1.life+" | J2: "+player2.life)
-        console.table(playerTwoEnemyTable)
-        if (player1.life==0){
-            console.log("El jugador 1 no tiene vidas, fin del juego")
-            console.log("Tablero final del jugador 1")
-            console.table(playerOneTable)
-            console.log("Tablero final del jugador 2")
-            console.table(playerTwoTable)
-        break;}
-        else{
-            shoot(player2,playerOneTable,playerTwoEnemyTable)
-        }
-        
-break;
-    }
-    if(statusShoot=='Agua'){
-        console.log("Ha disparado agua")
-        console.log("J1:"+player1.life+" | J2: "+player2.life)
-        console.table(playerTwoEnemyTable)
-    }
-    
-}while(player1.life!==0 && player2.life!==0)

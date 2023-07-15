@@ -1,15 +1,40 @@
 # Practica-Intro-JS
-He conseguido realizar todos los puntos obligatorios de la práctica,
-pero he intentado millones de veces ponerles 24 de vida que representan
-las 24 posibles explosiones totales por cada jugador (El resultado
-de la suma de los barcos y las casillas totales que ocupan) para que así, al
-llegar a 0 el juego terminase y se mostrasen ambos tableros en la ronda
-final mostrando así el resultado final de los tableros.
-Pero por un problema de la consola de node.js no me muestra todos los pasos,
-llega a un punto en el que deja de imprimar por consola, y de la unica
-manera que he logrado que al menos termine el juego ha sido poniendo menos
-vidas, unas 18 vidas para que terminase el juego sin bugearse.
-Sin embargo al poner 20 vidas a veces si termina, depende de la aleatoriedad
-de los disparos y los tocado.
-Agradecería que si se ve el fallo se me informase, porque no sé donde más
-buscar el error, gracias.
+
+# Hundir la Flota
+
+¡Bienvenido a Hundir la Flota! Este es un juego de batalla naval simple implementado en JavaScript. El juego se juega en la consola y enfrenta a dos jugadores en una batalla para hundir los barcos del oponente.
+
+## Cómo jugar
+
+1. Clona este repositorio en tu máquina local.
+
+```bash
+git clone https://github.com/antoniyo95/Practica-Intro-JS-Bootcamp-KeepCoding.git
+```
+
+2. Ejecuta el juego
+
+```
+node juego.js
+```
+
+3. Sigue las instrucciones en la consola para colocar tus barcos y realizar disparos.
+
+## Reglas del juego
+
+- Cada jugador tiene un tablero propio y un tablero enemigo.
+- Los barcos se colocan automáticamente en posiciones aleatorias en los tableros de cada jugador.
+- Los jugadores se turnan para realizar disparos en los tableros enemigos.
+- Los disparos pueden ser "Tocado" (💥) o "Agua" (💧).
+- El objetivo es hundir todos los barcos del oponente.
+- El juego termina cuando uno de los jugadores hunde todos los barcos del oponente o cuando ambos jugadores han agotado sus disparos.
+
+## Personalización del juego
+
+Puedes personalizar el juego ajustando los siguientes parámetros:
+
+- Número de disparos totales por jugador: puedes cambiar la cantidad de disparos totales modificando la propiedad ```disparosTotales``` en los objetos de los jugadores en el archivo **juego.js**.
+
+- Barcos: puedes ajustar los barcos disponibles modificando el array de los barcos en el archivo **barcos.js**.
+
+### Espero que disfrutes jugando a Hundir la Flota. ¡Diviértete!
